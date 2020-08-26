@@ -2,7 +2,7 @@
 
 # Lab + explicação:
 
-Para nosso montar nosso lab vamos precisar de um cluster kubernetes, pode ser minikube ou kind.
+Para montar nosso lab vamos precisar de um cluster kubernetes, pode ser até no kind ou minikube.
 
 **Não executar esse lab em um cluster produtivo** 
 
