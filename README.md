@@ -26,7 +26,7 @@ kubectl expose pod -n production web-app --port=8080 --target-port=8080 --type=N
 ```
 kubectl get no -o wide 
 kubectl get svc -n production 
-``
+```
 Agora basta acessar no seu navegador IP do node + Node port
 
 User foo 
