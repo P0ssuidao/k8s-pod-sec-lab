@@ -17,7 +17,7 @@ kubectl create role web-app-role -n production --verb=get,list,create --resource
 
 kubectl create rolebinding binding-role-app --serviceaccount=production:web-app-sa --role=web-app-role -n production
 
-kubectl run web-app --image=p0ssuidao/vulne-pod-lab:01 --serviceaccount=web-app-role -n production
+kubectl run web-app --image=p0ssuidao/vulne-pod-lab:01 --serviceaccount=web-app-sa -n production
 
 kubectl expose pod -n production web-app --port=8080 --target-port=8080 --type=NodePort --name=web-app-role
 
